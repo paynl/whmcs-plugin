@@ -1,0 +1,10 @@
+{
+    "require": {
+        "paynl/sdk": "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Paynl\\Whmcs\\": "src/"
+        }
+    }
+}

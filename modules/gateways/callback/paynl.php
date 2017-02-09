@@ -1,76 +1,86 @@
 <?php
+// Require libraries needed for gateway module functions.
+require_once __DIR__ . '/../../../init.php';
+require_once __DIR__ . '/../../../includes/gatewayfunctions.php';
+require_once __DIR__ . '/../../../includes/invoicefunctions.php';
 
-# Required File Includes
-include("../../../init.php");
-include("../../../includes/functions.php");
-include("../../../includes/gatewayfunctions.php");
-include("../../../includes/invoicefunctions.php");
+require_once __DIR__ . '/../paynl/vendor/autoload.php';
 
-require_once("../paynl/Autoload.php");
+// Fetch gateway configuration parameters.
+$gatewayParams = getGatewayVariables($gatewayModuleName);
 
-$gatewaymodule = "paynl"; # Enter your gateway module name here replacing template
-
-$GATEWAY = getGatewayVariables($gatewaymodule);
-if (!$GATEWAY["type"]) die("Module Not Activated"); # Checks gateway module is active before accepting callback
-
-$apiToken = $GATEWAY['apitoken'];
-$serviceId = $GATEWAY['serviceid'];
-
-$callType = $_GET['type'];
-
-
-if($callType == 'exchange'){
-    $pay_transactionId = $_GET['order_id'];
-    
-    $apiInfo = new Pay_Api_Info();
-    $apiInfo->setApiToken($apiToken);
-    $apiInfo->setServiceId($serviceId);
-    $apiInfo->setTransactionId($pay_transactionId);
-    
-    $result = $apiInfo->doRequest();
-    $fee = $result['paymentDetails']['paidCosts']/100;
-    $amount = $result['paymentDetails']['paidCurrenyAmount']/100;
-    
-    $invoiceid = $result['statsDetails']['extra1'];
-    
-    $transid = $pay_transactionId;
-    
-    $status = $result["paymentDetails"]['stateName'];
-    
-    $invoiceid = checkCbInvoiceID($invoiceid,$GATEWAY["name"]); # Checks invoice ID is a valid invoice number or ends processing
-    checkCbTransID($transid); # Checks transaction number isn't already in the database and ends processing if it does
-    
-    $dataArray = array(
-        'fee' => $fee,
-        'amount'=> $amount,
-        'invoiceid'=> $invoiceid,
-        'transid'=> $transid,
-        'status'=> $status,
-    );
-    
-    if($status == 'PAID'){
-        addInvoicePayment($invoiceid,$transid,$amount,$fee,$gatewaymodule); # Apply Payment to Invoice: invoiceid, transactionid, amount paid, fees, modulename
-	logTransaction($GATEWAY["name"],$dataArray,"Successful"); # Save to Gateway Log: name, data array, status
-    
-        die("TRUE| invoice #$invoiceid updated to PAID");
-
-        
-    } elseif($status == 'CANCEL'){
-        logTransaction($GATEWAY["name"],$dataArray,"Canceled"); # Save to Gateway Log: name, data array, status
-    
-        die("TRUE| invoice #$invoiceid logged CANCELED");
-    } else {
-        logTransaction($GATEWAY["name"],$dataArray,"Pending"); # Save to Gateway Log: name, data array, status
-      //PENDING
-        die("TRUE| invoice #$invoiceid logged PENDING");
-    }
-    
-    
-    
-   
+// Die if module is not active.
+if (!$gatewayParams['type']) {
+    die("Module Not Activated");
 }
 
+\Paynl\Config::setApiToken($gatewayParams['apitoken']);
+\Paynl\Config::setServiceId($gatewayParams['serviceid']);
+
+$transaction = \Paynl\Transaction::getForExchange();
+$invoiceId = $transaction->getExtra1();
+
+if(!$transaction->isPaid()){
+    die('TRUE| Nothing done, transaction is not paid');
+}
+
+$transactionData = $transaction->getData();
+
+/**
+ * Validate Callback Invoice ID.
+ *
+ * Checks invoice ID is a valid invoice number. Note it will count an
+ * invoice in any status as valid.
+ *
+ * Performs a die upon encountering an invalid Invoice ID.
+ *
+ * Returns a normalised invoice ID.
+ */
+$invoiceId = checkCbInvoiceID($invoiceId, $gatewayParams['name']);
+
+/**
+ * Check Callback Transaction ID.
+ *
+ * Performs a check for any existing transactions with the same given
+ * transaction number.
+ *
+ * Performs a die upon encountering a duplicate.
+ */
+checkCbTransID($transaction->getId());
+
+/**
+ * Log Transaction.
+ *
+ * Add an entry to the Gateway Log for debugging purposes.
+ *
+ * The debug data can be a string or an array. In the case of an
+ * array it will be
+ *
+ * @param string $gatewayName        Display label
+ * @param string|array $debugData    Data to log
+ * @param string $transactionStatus  Status
+ */
+logTransaction($gatewayParams['name'], $transactionData, $transactionData['paymentDetails']['stateName']);
 
 
-# Get Returned Variables - Adjust for Post Variable Names from your Gateway's Documentation
-
+if ($transaction->isPaid()) {
+    /**
+     * Add Invoice Payment.
+     *
+     * Applies a payment transaction entry to the given invoice ID.
+     *
+     * @param int $invoiceId         Invoice ID
+     * @param string $transactionId  Transaction ID
+     * @param float $paymentAmount   Amount paid (defaults to full balance)
+     * @param float $paymentFee      Payment fee (optional)
+     * @param string $gatewayModule  Gateway module name
+     */
+    addInvoicePayment(
+        $invoiceId,
+        $transaction->getId(),
+        $transaction->getPaidCurrencyAmount(),
+        null,
+        $gatewayModuleName
+    );
+    die('TRUE| Updated invoice to PAID');
+}
