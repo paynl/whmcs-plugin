@@ -126,11 +126,14 @@ abstract class Gateway implements GatewayInterface
                     'country' => $params['clientdetails']['country']
                 ),
             );
-
-            $transaction = \Paynl\Transaction::start($startData);
-            $redirect = $transaction->getRedirectUrl();
-            header("Location: $redirect");
+            try{
+                $transaction = \Paynl\Transaction::start($startData);
+                $redirect = $transaction->getRedirectUrl();
+                header("Location: $redirect");
             die();
+            } catch (Exception $e){
+                die($e->getMessage());
+            }
 
         } else {
             $url = "http" . (isset($_SERVER['HTTPS']) ? 's' : '') . "://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
