@@ -16,3 +16,6 @@ function paynl_phone_config(){
 function paynl_phone_link($params){
     return \Paynl\Whmcs\Gateway\Phone::getLink($params);
 }
+function paynl_phone_refund($params){
+    return \Paynl\Whmcs\Gateway\Phone::refund($params);
+}
