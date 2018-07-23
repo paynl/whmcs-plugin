@@ -4,21 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6c8823e38701d6ad4db0d02873530de2",
     "content-hash": "50755699e58e5bc8078862714d9ec24d",
     "packages": [
         {
             "name": "paynl/sdk",
-            "version": "v1.2.6",
+            "version": "v1.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paynl/sdk.git",
-                "reference": "1eb9b06727f84c7e247443263ff25f2c02ad3be3"
+                "reference": "d837f4cace6940da7f56187ae3940bd58d01e3cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paynl/sdk/zipball/1eb9b06727f84c7e247443263ff25f2c02ad3be3",
-                "reference": "1eb9b06727f84c7e247443263ff25f2c02ad3be3",
+                "url": "https://api.github.com/repos/paynl/sdk/zipball/d837f4cace6940da7f56187ae3940bd58d01e3cb",
+                "reference": "d837f4cace6940da7f56187ae3940bd58d01e3cb",
                 "shasum": ""
             },
             "require": {
@@ -41,7 +40,7 @@
                     "email": "andy@pay.nl"
                 }
             ],
-            "time": "2017-01-26 15:11:56"
+            "time": "2018-05-16T13:32:39+00:00"
         },
         {
             "name": "php-curl-class/php-curl-class",
@@ -97,7 +96,7 @@
                 "web service",
                 "xml"
             ],
-            "time": "2016-07-25 19:31:39"
+            "time": "2016-07-25T19:31:39+00:00"
         }
     ],
     "packages-dev": [],
