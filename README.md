@@ -5,7 +5,7 @@
 
 # Description
 
-With this PAY. plugin you can easily add different payment methods for your WHMCS. Go to https://www.pay.nl (Dutch) for an overview of all our features and services, you can also visit https://docs.pay.nl/plugins#whmcs for more information.
+This plugin enables you to add PAY Payment methods for your WHMCS. Go to https://www.pay.nl for an overview of all our features and services. You can also visit https://docs.pay.nl/plugins#whmcs for more information.
 
 - [Description](#description)
 - [Installation](#installation)
