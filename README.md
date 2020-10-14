@@ -20,10 +20,9 @@ Unzip the file and upload everything from the PAY. plugin to the webroot of your
 
 ##### Setup
 1. Go to the WHMCS admin and click on Configuration > System Settings on your top right
-2. Then click on 'Payment Gateways' on your left
-3. Click tab 'All Payment Gateways'
-4. Now you can select a PAY payment method and enter your settings!
-Ga rechts boven naar Configuration en klik op System Settings
+2. Then click on 'Payment Gateways' on your left.
+3. Click tab 'All Payment Gateways'.
+4. Now you can select a PAY.nl payment method and enter your settings!
 
 #### Update instructions
 
