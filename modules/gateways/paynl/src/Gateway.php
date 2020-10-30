@@ -26,7 +26,7 @@ abstract class Gateway implements GatewayInterface
     public static function getMetaData()
     {
         return array(
-            'DisplayName' => 'Pay.nl - '.static::getName(),
+            'DisplayName' => 'PAY. - '.static::getName(),
             'APIVersion' => '1.1' // Use API Version 1.1
         );
     }
@@ -56,7 +56,7 @@ abstract class Gateway implements GatewayInterface
         return array(
             'FriendlyName' => array(
                 'Type' => 'System',
-                'Value' => 'Pay.nl - '.static::getName(),
+                'Value' => 'PAY. - '.static::getName(),
             ),
             'apitoken' => array(
                 'FriendlyName' => 'API Token',
@@ -98,9 +98,10 @@ abstract class Gateway implements GatewayInterface
             \Paynl\Config::setApiToken($params['apitoken']);
             \Paynl\Config::setServiceId($params['serviceid']);
 
+            $whmcsversion = isset($params['whmcsVersion']) ? $params['whmcsVersion'] : '';
             $startData = array(
                 'amount' => $params['amount'],
-                'testmode' => $params['testMode']=='on'?1:0,
+                'testmode' => $params['testMode'] == 'on' ? 1 : 0,
                 'returnUrl' => $params['returnurl'],
 
                 'paymentMethod' => static::getPaymentProfileId(),
@@ -110,6 +111,8 @@ abstract class Gateway implements GatewayInterface
                 'extra1' => $params['invoiceid'],
                 'ipaddress' => \Paynl\Helper::getIp(),
                 'language' => $params['language'],
+                'object' => substr('whmcs 2.0.2|'. $whmcsversion . '|' . phpversion(),0,64),
+                'orderNumber' => $params['invoiceid'],
                 'enduser' => array(
                     'initials' => $params['clientdetails']['firstname'],
                     'lastName' => $params['clientdetails']['lastname'],
@@ -136,7 +139,7 @@ abstract class Gateway implements GatewayInterface
             }
 
         } else {
-            $url = "http" . (isset($_SERVER['HTTPS']) ? 's' : '') . "://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+            $url = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
             $payNowText = $params['langpaynow'];
 
             $code = "<form action='$url' method='POST'>"
