@@ -1,24 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Jesse
- * Date: 28-6-17
- * Time: 18:30
- */
+if (!defined("WHMCS")) {
+    die("This file cannot be accessed directly");
+}
 
-namespace Paynl\Whmcs\Gateway;
+require_once __DIR__."/paynl/vendor/autoload.php";
 
+function paynl_vvvgiftcard_MetaData(){
+    return \Paynl\Whmcs\Gateway\Webshopgiftcard::getMetaData();
+}
 
-use Paynl\Whmcs\Gateway;
+function paynl_vvvgiftcard_config(){
+    return \Paynl\Whmcs\Gateway\Webshopgiftcard::getConfig();
+}
 
-class VVVGiftcard extends Gateway
-{
-    public static function getName()
-    {
-        return 'VVV Giftcard';
-    }
-    public static function getPaymentProfileId()
-    {
-        return 1714;
-    }
+function paynl_vvvgiftcard_link($params){
+    return \Paynl\Whmcs\Gateway\Webshopgiftcard::getLink($params);
 }
