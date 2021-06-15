@@ -128,7 +128,23 @@ abstract class Gateway implements GatewayInterface
                     'city' => $params['clientdetails']['city'],
                     'country' => $params['clientdetails']['country']
                 ),
+                'products' => array(),
             );
+
+            $cart = $params['cart'];
+            $items = $cart->items;
+            foreach ($items as $key => $item) {
+                $product = array(
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'price' => (float) filter_var( $item->amount, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
+                    'qty' => $item->qty,
+                    'tax' => 0,
+                    'type' => 'ARTICLE'
+                );
+                $startData['products'][] = $product;           
+            }
+            
             try{
                 $transaction = \Paynl\Transaction::start($startData);
                 $redirect = $transaction->getRedirectUrl();
