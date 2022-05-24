@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kevin
- * Date: 15-06-21
- * Time: 18:14
- */
 
 namespace Paynl\Whmcs\Gateway;
 
