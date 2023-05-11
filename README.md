@@ -3,6 +3,9 @@
 </p>
 <h1 align="center">PAY. WHMCS plugin</h1>
 
+<h1 align="left">Notice</h1>
+This module is no longer maintained. You are free to use it. However, we have stopped development and will no longer offer support.
+
 # Description
 
 This plugin enables you to add PAY Payment methods for your WHMCS. Go to <a href="https://www.pay.nl">PAY</a> for an overview of all our features and services. You can also visit
