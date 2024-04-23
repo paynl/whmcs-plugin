@@ -11,6 +11,7 @@ class Przelewy24 extends Gateway
     {
         return 'Przelewy24';
     }
+
     public static function getPaymentProfileId()
     {
         return 2151;

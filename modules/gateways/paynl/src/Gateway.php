@@ -1,18 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: andy
- * Date: 8-2-17
- * Time: 16:18
- */
 
 namespace Paynl\Whmcs;
 
-interface GatewayInterface{
+interface GatewayInterface
+{
     /**
      * @return string The name of the payment method
      */
     public static function getName();
+
     /**
      * @return integer The paymentProfileId
      */
@@ -26,8 +22,8 @@ abstract class Gateway implements GatewayInterface
     public static function getMetaData()
     {
         return array(
-            'DisplayName' => 'PAY. - '.static::getName(),
-            'APIVersion' => '1.1' // Use API Version 1.1
+          'DisplayName' => 'PAY. - ' . static::getName(),
+          'APIVersion' => '1.1' // Use API Version 1.1
         );
     }
 
@@ -55,15 +51,15 @@ abstract class Gateway implements GatewayInterface
     {
         return array(
             'FriendlyName' => array(
-                'Type' => 'System',
-                'Value' => 'PAY. - '.static::getName(),
+              'Type' => 'System',
+              'Value' => 'PAY. - ' . static::getName(),
             ),
             'apitoken' => array(
                 'FriendlyName' => 'API Token',
                 'Type' => 'text',
                 'Size' => '32',
                 'Default' => '',
-                'Description' => 'You can find your api tokens on the <a href="https://admin.pay.nl/my_merchant">my merchant</a> page',
+                'Description' => 'You can find your API Token on the <a href="https://admin.pay.nl/my_merchant">my merchant</a> page',
             ),
             'serviceid' => array(
                 'FriendlyName' => 'Service Id',
@@ -92,6 +88,14 @@ abstract class Gateway implements GatewayInterface
         );
     }
 
+    /**
+     * @param $params
+     * @return string|void
+     * @throws \Paynl\Error\Api
+     * @throws \Paynl\Error\Error
+     * @throws \Paynl\Error\Required\ApiToken
+     * @throws \Paynl\Error\Required\ServiceId
+     */
     public static function getLink($params)
     {
         if (isset($_POST['action']) && $_POST['action'] == 'doPayment') {
@@ -144,37 +148,45 @@ abstract class Gateway implements GatewayInterface
                 );
                 $startData['products'][] = $product;           
             }
-            
-            try{
+
+            try {
                 $transaction = \Paynl\Transaction::start($startData);
                 $redirect = $transaction->getRedirectUrl();
                 header("Location: $redirect");
-            die();
-            } catch (Exception $e){
+                die();
+            } catch (Exception $e) {
                 die($e->getMessage());
             }
-
         } else {
             $url = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
             $payNowText = $params['langpaynow'];
 
-            $code = "<form action='$url' method='POST'>"
+            return "<form action='$url' method='POST'>"
                 . "<input type='hidden' name='action' value='doPayment' />"
                 . " <input type='submit' value='$payNowText'/>"
                 . "</form>";
-            return $code;
         }
     }
-    public static function refund($params){
+
+    /**
+     * @param $params
+     * @return array
+     * @throws \Paynl\Error\Api
+     * @throws \Paynl\Error\Error
+     * @throws \Paynl\Error\Required\ApiToken
+     * @throws \Paynl\Error\Required\ServiceId
+     */
+    public static function refund($params)
+    {
         \Paynl\Config::setApiToken($params['apitoken']);
         \Paynl\Config::setServiceId($params['serviceid']);
 
         $refund = \Paynl\Transaction::refund($params['transid'], $params['amount']);
 
         return array(
-            'status' => 'success',
-            'rawdata' => $refund->getData(),
-            'transid' => $refund->getRefundId()
+          'status' => 'success',
+          'rawdata' => $refund->getData(),
+          'transid' => $refund->getRefundId()
         );
     }
 }

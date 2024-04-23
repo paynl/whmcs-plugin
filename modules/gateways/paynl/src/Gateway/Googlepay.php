@@ -11,6 +11,7 @@ class Googlepay extends Gateway
     {
         return 'Googlepay';
     }
+
     public static function getPaymentProfileId()
     {
         return 2558;

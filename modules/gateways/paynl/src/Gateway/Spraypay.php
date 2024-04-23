@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kevin
- * Date: 15-06-21
- * Time: 18:14
- */
 
 namespace Paynl\Whmcs\Gateway;
 
@@ -17,6 +11,7 @@ class Spraypay extends Gateway
     {
         return 'SprayPay';
     }
+
     public static function getPaymentProfileId()
     {
         return 1987;

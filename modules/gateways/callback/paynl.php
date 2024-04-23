@@ -14,18 +14,18 @@ if (!$gatewayParams['type']) {
     die("Module Not Activated");
 }
 
-\Paynl\Config::setApiToken($gatewayParams['apitoken']);
-\Paynl\Config::setServiceId($gatewayParams['serviceid']);
+\Paynl\Config::setApiToken($gatewayParams['apitoken'] ?? '');
+\Paynl\Config::setServiceId($gatewayParams['serviceid'] ?? '');
 
 $transaction = \Paynl\Transaction::getForExchange();
-if(!$transaction){
+if (!$transaction) {
     die('FALSE| Cannot find transaction');
 }
 
 $invoiceId = $transaction->getExtra1();
 
-if(!$transaction->isPaid()){
-    die('TRUE| ignoring');
+if (!$transaction->isPaid()) {
+    die('TRUE|Ignoring');
 }
 
 $transactionData = $transaction->getData();
