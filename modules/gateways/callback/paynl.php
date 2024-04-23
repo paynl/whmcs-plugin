@@ -29,7 +29,7 @@ if (!$transaction) {
 
 $invoiceId = $transaction->getExtra1();
 
-if (!$transaction->isPaid() || !$transaction->isAuthorized()) {
+if (!$transaction->isPaid() && !$transaction->isAuthorized()) {
     die('TRUE|Transaction not PAID');
 }
 
