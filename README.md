@@ -12,10 +12,16 @@ This plugin enables you to add PAY Payment methods for your WHMCS. Go to <a href
 <a href="https://docs.pay.nl/plugins#whmcs">PAY's documentation</a> for more information.
 
 - [Description](#description)
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [Update instructions](#update-instructions)
 - [Usage](#usage)
 - [Support](#support)
+
+# Requirements
+  PHP 7.2 or higher\
+  PHP tested up to 8.1\
+  WHMCS maximum version: Tested up to 8.6.2
 
 # Installation
 #### Installing

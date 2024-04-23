@@ -11,6 +11,7 @@ class Dankort extends Gateway
     {
         return 'Dankort';
     }
+
     public static function getPaymentProfileId()
     {
         return 1939;

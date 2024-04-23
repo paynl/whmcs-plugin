@@ -11,6 +11,7 @@ class AfterpayInternational extends Gateway
     {
         return 'Afterpay International';
     }
+
     public static function getPaymentProfileId()
     {
         return 2561;

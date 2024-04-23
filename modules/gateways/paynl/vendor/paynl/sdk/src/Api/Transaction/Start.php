@@ -1,20 +1,4 @@
 <?php
-/*
- * Copyright (C) 2015 Andy Pieters <andy@pay.nl>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 namespace Paynl\Api\Transaction;
 
@@ -106,7 +90,7 @@ class Start extends Transaction
      */
     private $_domainId;
     /**
-     * @var string additional data transferData
+     * @var array additional data transferData
      */
     private $_transferData;
     /**
@@ -121,7 +105,6 @@ class Start extends Transaction
      * @var string the ipaddress of the enduser, used for fraud detecion
      */
     private $_ipaddress;
-
     /**
      * @var \DateTime
      */
@@ -130,12 +113,10 @@ class Start extends Transaction
      * @var \DateTime
      */
     private $_deliveryDate;
-
     /**
      * @var array the products for the order
      */
     private $_products = array();
-
     /**
      * @var \DateTime
      */
@@ -241,10 +222,10 @@ class Start extends Transaction
         $vatCode,
         $vatPercentage
     ) {
-        if ( ! is_numeric($price)) {
+        if (! is_numeric($price)) {
             throw new Error('Price must be numeric', 1);
         }
-        if ( ! is_numeric($quantity)) {
+        if (! is_numeric($quantity)) {
             throw new Error('Quantity must be numeric', 1);
         }
 
@@ -280,18 +261,21 @@ class Start extends Transaction
      *  address => [
      *      streetName
      *      streetNumber
+     *      streetNumberExtension
      *      zipCode
      *      city
      *      countryCode
      *  ]
      *  invoiceAddress => [
      *      initials
-     *      lastname
+     *      lastName
      *      streetName
      *      streetNumber
+     *      streetNumberExtension
      *      zipCode
      *      city
      *      countryCode
+     *      gender
      *  ]
      * ]
      *
@@ -311,7 +295,7 @@ class Start extends Transaction
      */
     public function setAmount($amount)
     {
-        if ( ! is_numeric($amount)) {
+        if (! is_numeric($amount)) {
             throw new Error('Amount is niet numeriek', 1);
         }
         $this->_amount = $amount;
@@ -319,7 +303,7 @@ class Start extends Transaction
 
     public function setPaymentOptionId($paymentOptionId)
     {
-        if ( ! is_numeric($paymentOptionId)) {
+        if (! is_numeric($paymentOptionId)) {
             throw new Error('PaymentOptionId is niet numeriek', 1);
         }
         $this->_paymentOptionId = $paymentOptionId;
@@ -415,16 +399,16 @@ class Start extends Transaction
         $data['finishUrl'] = $this->_finishUrl;
 
 
-        if ( ! empty($this->_paymentOptionId)) {
+        if (! empty($this->_paymentOptionId)) {
             $data['paymentOptionId'] = $this->_paymentOptionId;
         }
-        if ( ! empty($this->_exchangeUrl)) {
+        if (! empty($this->_exchangeUrl)) {
             $data['transaction']['orderExchangeUrl'] = $this->_exchangeUrl;
         }
-        if ( ! empty($this->_orderNumber)) {
+        if (! empty($this->_orderNumber)) {
             $data['transaction']['orderNumber'] = $this->_orderNumber;
         }
-        if ( ! empty($this->_description)) {
+        if (! empty($this->_description)) {
             $data['transaction']['description'] = $this->_description;
         }
         if (isset($this->_currency)) {
@@ -433,13 +417,13 @@ class Start extends Transaction
         if (isset($this->_expireDate)) {
             $data['transaction']['expireDate'] = $this->_expireDate->format('d-m-Y H:i:s');
         }
-        if ( ! empty($this->_paymentOptionSubId)) {
+        if (! empty($this->_paymentOptionSubId)) {
             $data['paymentOptionSubId'] = $this->_paymentOptionSubId;
         }
 
         $data['ipAddress'] = isset($this->_ipaddress) ? $this->_ipaddress : Helper::getIp();
 
-        if ( ! empty($this->_products)) {
+        if (! empty($this->_products)) {
             $data['saleData']['orderData'] = $this->_products;
         }
         if ($this->_deliveryDate instanceof \DateTime) {
@@ -449,7 +433,7 @@ class Start extends Transaction
             $data['saleData']['invoiceDate'] = $this->_invoiceDate->format('d-m-Y');
         }
 
-        if ( ! empty($this->_enduser)) {
+        if (! empty($this->_enduser)) {
             if (isset($this->_enduser['birthDate']) && $this->_enduser['birthDate'] instanceof \DateTime) {
                 $this->_enduser['dob'] = $this->_enduser['birthDate']->format('d-m-Y');
                 unset($this->_enduser['birthDate']);
@@ -457,37 +441,37 @@ class Start extends Transaction
             $data['enduser'] = $this->_enduser;
         }
 
-        if ( ! empty($this->_extra1)) {
+        if (! empty($this->_extra1)) {
             $data['statsData']['extra1'] = $this->_extra1;
         }
-        if ( ! empty($this->_extra2)) {
+        if (! empty($this->_extra2)) {
             $data['statsData']['extra2'] = $this->_extra2;
         }
-        if ( ! empty($this->_extra3)) {
+        if (! empty($this->_extra3)) {
             $data['statsData']['extra3'] = $this->_extra3;
         }
-        if ( ! empty($this->_promotorId)) {
+        if (! empty($this->_promotorId)) {
             $data['statsData']['promotorId'] = $this->_promotorId;
         }
-        if ( ! empty($this->_info)) {
+        if (! empty($this->_info)) {
             $data['statsData']['info'] = $this->_info;
         }
-        if ( ! empty($this->_tool)) {
+        if (! empty($this->_tool)) {
             $data['statsData']['tool'] = $this->_tool;
         }
-        if ( ! empty($this->_object)) {
+        if (! empty($this->_object)) {
             $data['statsData']['object'] = $this->_object;
         }
-        if ( ! empty($this->_domainId)) {
+        if (! empty($this->_domainId)) {
             $data['statsData']['domain_id'] = $this->_domainId;
         }
-        if ( ! empty($this->_transferData)) {
+        if (! empty($this->_transferData)) {
             $data['statsData']['transferData'] = $this->_transferData;
         }
-        if ( ! empty($this->_transferType)) {
+        if (! empty($this->_transferType)) {
             $data['transferType'] = $this->_transferType;
         }
-        if ( ! empty($this->_transferValue)) {
+        if (! empty($this->_transferValue)) {
             $data['transferValue'] = $this->_transferValue;
         }
 

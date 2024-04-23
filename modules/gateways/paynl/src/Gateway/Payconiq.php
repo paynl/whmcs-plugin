@@ -11,6 +11,7 @@ class Payconiq extends Gateway
     {
         return 'Payconiq';
     }
+
     public static function getPaymentProfileId()
     {
         return 2379;

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: andy
- * Date: 8-2-17
- * Time: 18:14
- */
 
 namespace Paynl\Whmcs\Gateway;
 
@@ -17,6 +11,7 @@ class Giropay extends Gateway
     {
         return 'Giropay';
     }
+
     public static function getPaymentProfileId()
     {
         return 694;

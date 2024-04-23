@@ -11,6 +11,7 @@ class Applepay extends Gateway
     {
         return 'Applepay';
     }
+
     public static function getPaymentProfileId()
     {
         return 2277;

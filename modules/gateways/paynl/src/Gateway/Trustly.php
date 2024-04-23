@@ -2,7 +2,6 @@
 
 namespace Paynl\Whmcs\Gateway;
 
-
 use Paynl\Whmcs\Gateway;
 
 class Trustly extends Gateway
@@ -11,6 +10,7 @@ class Trustly extends Gateway
     {
         return 'Trustly';
     }
+
     public static function getPaymentProfileId()
     {
         return 2718;

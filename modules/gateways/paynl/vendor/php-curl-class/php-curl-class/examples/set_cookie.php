@@ -1,7 +1,8 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
 
-use \Curl\Curl;
+require __DIR__ . '/../vendor/autoload.php';
+
+use Curl\Curl;
 
 $curl = new Curl();
 $curl->setCookie('foo', 'bar');

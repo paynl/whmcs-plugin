@@ -1,29 +1,14 @@
 <?php
-/*
- * Copyright (C) 2015 Andy Pieters <andy@andypieters.nl>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 namespace Paynl;
 
 use Paynl\Api\Transaction as Api;
+use Paynl\Config;
 
 /**
  * Description of Paymentmethods
  *
- * @author Andy Pieters <andy@andypieters.nl>
+ * @author Andy Pieters <andy@pay.nl>
  */
 class Paymentmethods
 {
@@ -38,9 +23,8 @@ class Paymentmethods
     {
         $paymentMethods = array();
 
-        $basePath = $input['service']['basePath'];
-
         foreach ((array)$input['countryOptionList'] as $country) {
+
             foreach ((array)$country['paymentOptionList'] as $paymentOption) {
                 if (isset($paymentMethods[$paymentOption['id']])) {
                     $paymentMethods[$paymentOption['id']]['countries'][] = $country['id'];
@@ -50,9 +34,10 @@ class Paymentmethods
                 $banks = array();
                 if (!empty($paymentOption['paymentOptionSubList'])) {
                     foreach ((array)$paymentOption['paymentOptionSubList'] as $optionSub) {
+
                         $image = '';
-                        if($paymentOption['id'] == 10){// only add images for ideal, because the rest will not have images
-                            $image = $basePath.$optionSub['path'].$optionSub['img'];
+                        if (isset($optionSub['image'])) {
+                            $image = $optionSub['image'];
                         }
                         $banks[] = array(
                           'id' => $optionSub['id'],
@@ -62,12 +47,16 @@ class Paymentmethods
                         );
                     }
                 }
+
                 $paymentMethods[$paymentOption['id']] = array(
                   'id' => $paymentOption['id'],
                   'name' => $paymentOption['name'],
                   'visibleName' => $paymentOption['visibleName'],
+                  'min_amount' => $paymentOption['min_amount'],
+                  'max_amount' => $paymentOption['max_amount'],
                   'countries' => array($country['id']),
                   'banks' => $banks,
+                  'brand' => $paymentOption['brand'],
                 );
             }
         }
@@ -99,12 +88,25 @@ class Paymentmethods
      * Get a list of available payment methods
      *
      * @param array $options
+     * @param null $languageCode For translation of names and descriptions. Use for example 'en' or 'nl'.
      * @return array
+     * @throws Error\Api
+     * @throws Error\Error
+     * @throws Error\Required\ApiToken
      */
-    public static function getList(array $options = array())
+    public static function getList(array $options = array(), $languageCode = null)
     {
         $api = new Api\GetService();
+
+        if (!empty($languageCode)) {
+            $api->setLanguageCode($languageCode);
+        }
+
+        # Always use default gateway for getService
+        \Paynl\Config::setApiBase('https://rest-api.pay.nl');
+
         $result = $api->doRequest();
+
         $paymentMethods = self::reorderOutput($result);
 
         if (isset($options['country'])) {

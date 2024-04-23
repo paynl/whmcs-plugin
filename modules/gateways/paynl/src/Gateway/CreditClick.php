@@ -11,6 +11,7 @@ class CreditClick extends Gateway
     {
         return 'CreditClick';
     }
+
     public static function getPaymentProfileId()
     {
         return 2107;

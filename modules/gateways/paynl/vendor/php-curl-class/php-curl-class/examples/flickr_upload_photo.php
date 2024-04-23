@@ -1,8 +1,8 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 require 'flickr.class.php';
 
-use \Curl\Curl;
+use Flickr\Flickr;
 
 $flickr = new Flickr();
 $flickr->authenticate();
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $user_id = $_SESSION['user_id'];
         $photo_id = $result->response->photoid;
-        $photo_url = 'http://www.flickr.com/photos/' . $user_id . '/' . $photo_id;
+        $photo_url = 'https://www.flickr.com/photos/' . $user_id . '/' . $photo_id;
         echo '<p>Photo uploaded successfully. <a href="' . $photo_url . '">View photo</a>.</p>';
     }
 }

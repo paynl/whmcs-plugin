@@ -1,12 +1,19 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
 
-use \Curl\Curl;
+require __DIR__ . '/../vendor/autoload.php';
+
+use Curl\Curl;
+
+// curl --request GET "https://httpbin.org/get?key=value"
 
 $curl = new Curl();
-for ($i = 1; $i <= 10; $i++) {
-    $curl->get('https://httpbin.org/get', array(
-        'page' => $i,
-    ));
-    // TODO: Do something with result $curl->response.
+$curl->get('https://httpbin.org/get', [
+    'key' => 'value',
+]);
+
+if ($curl->error) {
+    echo 'Error: ' . $curl->errorMessage . "\n";
+} else {
+    echo 'Response:' . "\n";
+    var_dump($curl->response);
 }

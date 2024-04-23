@@ -11,6 +11,7 @@ class Eps extends Gateway
     {
         return 'EPS Uberweisung';
     }
+
     public static function getPaymentProfileId()
     {
         return 2062;
