@@ -14,7 +14,7 @@ if (!$gatewayParams['type']) {
     die("FALSE|Module Not Activated");
 }
 
-$action = (!empty($_REQUEST['action'])) ? $_REQUEST['action'] : null;
+$action = !empty($_REQUEST['action']) ? $_REQUEST['action'] : null;
 if ($action != 'new_ppt') {
     die('TRUE|Ignoring');
 }
