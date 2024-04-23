@@ -21,7 +21,7 @@ This plugin enables you to add PAY Payment methods for your WHMCS. Go to <a href
 # Requirements
   PHP 7.2 or higher\
   PHP tested up to 8.1\
-  WHMCS maximum version: Tested up to 8.6.2
+  WHMCS maximum version: Tested up to 8.9.0
 
 # Installation
 #### Installing
