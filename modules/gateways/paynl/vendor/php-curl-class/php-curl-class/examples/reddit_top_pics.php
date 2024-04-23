@@ -1,15 +1,16 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
 
-use \Curl\Curl;
+require __DIR__ . '/../vendor/autoload.php';
 
-$data = array();
+use Curl\Curl;
+
+$data = [];
 if (isset($_GET['after'])) {
     $data['after'] = $_GET['after'];
 }
 
 $curl = new Curl();
-$curl->get('http://www.reddit.com/r/pics/top/.json', $data);
+$curl->get('https://www.reddit.com/r/pics/top/.json', $data);
 
 echo '<ul>';
 

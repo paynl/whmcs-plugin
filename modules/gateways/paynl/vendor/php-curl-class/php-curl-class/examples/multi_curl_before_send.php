@@ -1,12 +1,13 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
 
-use \Curl\MultiCurl;
+require __DIR__ . '/../vendor/autoload.php';
 
-$headers = array(
+use Curl\MultiCurl;
+
+$headers = [
     'Content-Type' => 'application/json',
     'X-CUSTOM-HEADER' => 'my-custom-header',
-);
+];
 
 $multi_curl = new MultiCurl();
 

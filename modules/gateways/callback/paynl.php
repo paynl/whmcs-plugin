@@ -18,10 +18,14 @@ if (!$gatewayParams['type']) {
 \Paynl\Config::setServiceId($gatewayParams['serviceid']);
 
 $transaction = \Paynl\Transaction::getForExchange();
+if(!$transaction){
+    die('FALSE| Cannot find transaction');
+}
+
 $invoiceId = $transaction->getExtra1();
 
 if(!$transaction->isPaid()){
-    die('TRUE| Nothing done, transaction is not paid');
+    die('TRUE| ignoring');
 }
 
 $transactionData = $transaction->getData();
@@ -78,7 +82,7 @@ if ($transaction->isPaid()) {
     addInvoicePayment(
         $invoiceId,
         $transaction->getId(),
-        $transaction->getPaidCurrencyAmount(),
+        $transaction->getAmountPaidOriginal(),
         null,
         $gatewayModuleName
     );

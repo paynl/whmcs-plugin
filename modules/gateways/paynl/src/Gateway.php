@@ -111,7 +111,7 @@ abstract class Gateway implements GatewayInterface
                 'extra1' => $params['invoiceid'],
                 'ipaddress' => \Paynl\Helper::getIp(),
                 'language' => $params['language'],
-                'object' => substr('whmcs 2.1.0|' . $whmcsversion . '|' . substr(phpversion(), 0, 3), 0, 64),
+                'object' => substr('whmcs 3.0.0|' . $whmcsversion . '|' . substr(phpversion(), 0, 3), 0, 64),
                 'orderNumber' => $params['invoiceid'],
                 'enduser' => array(
                     'initials' => $params['clientdetails']['firstname'],
@@ -137,7 +137,7 @@ abstract class Gateway implements GatewayInterface
                 $product = array(
                     'id' => $item->id,
                     'name' => $item->name,
-                    'price' => (float) filter_var( $item->amount, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
+                    'price' => ((float) filter_var( $item->amount, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ) / 100),
                     'qty' => $item->qty,
                     'tax' => 0,
                     'type' => 'ARTICLE'

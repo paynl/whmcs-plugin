@@ -1,6 +1,6 @@
 <?php
-/* 
- * Copyright (C) 2015 Andy Pieters <andy@pay.nl>
+/*
+ * Copyright (C) 2020 PAY. <support@pay.nl>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,9 @@ require_once '../config.php';
 
 $transactionId = $_GET['transactionId'];
 try {
-    $result = \Paynl\Transaction::refund($transactionId, 5);
+
+    $result = \Paynl\Transaction::refund($transactionId);
+
 } catch (\Paynl\Error\Error $e) {
     echo $e->getMessage();
 }

@@ -1,9 +1,10 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
 
-use \Curl\Curl;
+require __DIR__ . '/../vendor/autoload.php';
 
-$myfile = curl_file_create('cats.jpg', 'image/png', 'test_name');
+use Curl\Curl;
+
+$myfile = curl_file_create('cats.jpg', 'image/jpeg', 'test_name');
 
 $curl = new Curl();
 
@@ -12,9 +13,9 @@ $curl = new Curl();
 // then try uncommenting the following line:
 // $curl->setHeader('Content-Type', 'multipart/form-data');
 
-$curl->post('https://httpbin.org/post', array(
+$curl->post('https://httpbin.org/post', [
     'myfile' => $myfile,
-));
+]);
 
 if ($curl->error) {
     echo 'Error: ' . $curl->errorMessage . "\n";

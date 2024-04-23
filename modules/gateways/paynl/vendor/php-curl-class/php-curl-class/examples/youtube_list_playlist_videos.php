@@ -1,19 +1,20 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
 
-use \Curl\Curl;
+require __DIR__ . '/../vendor/autoload.php';
 
-define('YOUTUBE_API_KEY', 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+use Curl\Curl;
+
+const YOUTUBE_API_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 
 $playlistId = 'RDHJb0VYVtaNc';
 
 $curl = new Curl();
-$curl->get('https://www.googleapis.com/youtube/v3/playlistItems', array(
+$curl->get('https://www.googleapis.com/youtube/v3/playlistItems', [
     'key' => YOUTUBE_API_KEY,
     'maxResults' => '50',
     'part' => 'snippet',
     'playlistId' => $playlistId,
-));
+]);
 
 echo 'Songs in this playlist:' . "\n";
 

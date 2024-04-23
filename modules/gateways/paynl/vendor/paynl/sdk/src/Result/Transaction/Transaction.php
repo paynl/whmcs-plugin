@@ -1,20 +1,4 @@
 <?php
-/*
- * Copyright (C) 2015 Andy Pieters <andy@pay.nl>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 namespace Paynl\Result\Transaction;
 
@@ -28,6 +12,8 @@ use Paynl\Result\Result;
  */
 class Transaction extends Result
 {
+    private $_cachedStatusResult = null;
+
     /**
      * @return bool Transaction is paid
      */
@@ -54,6 +40,17 @@ class Transaction extends Result
         return $this->isCanceled();
     }
 
+  /**
+   *
+   * Check whether the status of the transaction is chargeback
+   *
+   * @return bool
+   */
+    public function isChargeBack()
+    {
+      return $this->data['paymentDetails']['stateName'] === 'CHARGEBACK';
+    }
+
     /**
      * @return bool Transaction is Canceled
      */
@@ -64,7 +61,7 @@ class Transaction extends Result
 
     public function void()
     {
-        if ( ! $this->isAuthorized()) {
+        if (!$this->isAuthorized()) {
             throw new Error('Cannod void transaction, status is not authorized');
         }
 
@@ -86,7 +83,7 @@ class Transaction extends Result
 
     public function capture()
     {
-        if ( ! $this->isAuthorized()) {
+        if (!$this->isAuthorized()) {
             throw new Error('Cannod capture transaction, status is not authorized');
         }
 
@@ -112,6 +109,8 @@ class Transaction extends Result
     }
 
     /**
+     * Check whether the payment is partial refunded
+     *
      * @return bool
      */
     public function isPartiallyRefunded()
@@ -119,44 +118,78 @@ class Transaction extends Result
         return $this->data['paymentDetails']['stateName'] === 'PARTIAL_REFUND';
     }
 
+  /**
+   * Check whether the payment is a partial payment.
+   *
+   * @return bool
+   */
+    public function isPartialPayment()
+    {
+        return $this->data['paymentDetails']['stateName'] === 'PARTIAL_PAYMENT';
+    }
+
     /**
-     * @return float The amount of the transaction (in EUR)
+     * @return float|int The order amount
      */
     public function getAmount()
     {
-        return $this->data['paymentDetails']['amount'] / 100;
+        return $this->data['paymentDetails']['amount']['value'] / 100;
     }
 
     /**
-     * @return float The amount of the transaction (in the currency)
+     * @return string The currency of getAmount()
      */
-    public function getCurrencyAmount()
+    public function getCurrency()
     {
-        return $this->data['paymentDetails']['currenyAmount'] / 100;
+        return $this->data['paymentDetails']['amount']['currency'];
     }
 
     /**
-     * @return float Paid amount in original currency
+     * @return float|int The original amount
      */
-    public function getPaidCurrencyAmount()
+    public function getAmountOriginal()
     {
-        return $this->data['paymentDetails']['paidCurrenyAmount'] / 100;
+        return $this->data['paymentDetails']['amountOriginal']['value'] / 100;
     }
 
     /**
-     * @return float Paid amount
+     * @return string The currency of getAmountOriginal()
      */
-    public function getPaidAmount()
+    public function getAmountOriginalCurrency()
     {
-        return $this->data['paymentDetails']['paidAmount'] / 100;
+        return $this->data['paymentDetails']['amountOriginal']['currency'];
     }
 
     /**
-     * @return string Currency in which the transaction is actually paid
+     * @return float|int The original paid amount
      */
-    public function getPaidCurrency()
+    public function getAmountPaidOriginal()
     {
-        return $this->data['paymentDetails']['paidCurrency'];
+        return $this->data['paymentDetails']['amountPaidOriginal']['value'] / 100;
+    }
+
+    /**
+     * @return string The currency of getAmountPaidOriginal()
+     */
+    public function getAmountPaidOriginalCurrency()
+    {
+        return $this->data['paymentDetails']['amountPaidOriginal']['currency'];
+    }
+
+    /**
+     * @return float|int The paid amount
+     */
+    public function getAmountPaid()
+    {
+        return $this->data['paymentDetails']['amountPaid']['value'] / 100;
+    }
+
+    /**
+     * @return string The currency of getAmountPaid()
+     */
+    public function getAmountPaidCurrency()
+    {
+        return $this->data['paymentDetails']['amountPaid']['currency'];
     }
 
     /**
@@ -223,9 +256,29 @@ class Transaction extends Result
         return $this->data['statsDetails']['extra3'];
     }
 
+    /**
+     * @return float|int The refunded amount in euro
+     * @throws Error
+     * @throws \Paynl\Error\Api
+     */
+    public function getRefundedAmount()
+    {
+        return $this->getStatus()->getAmountRefund();
+    }
+
+    /**
+     * @return float|int The refunded amount in the used currency
+     * @throws Error
+     * @throws \Paynl\Error\Api
+     */
+    public function getRefundedCurrencyAmount()
+    {
+        return $this->getStatus()->getAmountRefundCurrency();
+    }
+
     public function approve()
     {
-        if ( ! $this->isBeingVerified()) {
+        if (!$this->isBeingVerified()) {
             throw new Error("Cannot approve transaction because it does not have the status 'verify'");
         }
 
@@ -233,6 +286,19 @@ class Transaction extends Result
         $this->_reload(); //status is changed, so refresh the object
 
         return $result;
+    }
+
+    /**
+     * @return Status
+     * @throws Error
+     * @throws \Paynl\Error\Api
+     */
+    public function getStatus()
+    {
+        if (is_null($this->_cachedStatusResult)) {
+            $this->_cachedStatusResult = \Paynl\Transaction::status($this->getId());
+        }
+        return $this->_cachedStatusResult;
     }
 
     /**
@@ -245,13 +311,14 @@ class Transaction extends Result
 
     private function _reload()
     {
-        $result     = \Paynl\Transaction::get($this->getId());
+        $this->_cachedStatusResult = null;
+        $result = \Paynl\Transaction::get($this->getId());
         $this->data = $result->getData();
     }
 
     public function decline()
     {
-        if ( ! $this->isBeingVerified()) {
+        if (!$this->isBeingVerified()) {
             throw new Error("Cannot decline transaction because it does not have the status 'verify'");
         }
 
@@ -260,5 +327,4 @@ class Transaction extends Result
 
         return $result;
     }
-
 }

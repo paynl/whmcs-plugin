@@ -1,10 +1,11 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
 
-use \Curl\Curl;
+require __DIR__ . '/../vendor/autoload.php';
 
-define('CLIENT_ID', 'XXXXXXXXXXXX.apps.googleusercontent.com');
-define('CLIENT_SECRET', 'XXXXXXXXXXXXXXXXXXXXXXXX');
+use Curl\Curl;
+
+const CLIENT_ID = 'XXXXXXXXXXXX.apps.googleusercontent.com';
+const CLIENT_SECRET = 'XXXXXXXXXXXXXXXXXXXXXXXX';
 
 session_start();
 
@@ -13,18 +14,18 @@ if (isset($_GET['code'])) {
 
     // Exchange the authorization code for an access token.
     $curl = new Curl();
-    $curl->post('https://accounts.google.com/o/oauth2/token', array(
+    $curl->post('https://accounts.google.com/o/oauth2/token', [
         'code' => $code,
         'client_id' => CLIENT_ID,
         'client_secret' => CLIENT_SECRET,
-        'redirect_uri' => implode('', array(
+        'redirect_uri' => implode('', [
             isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http',
             '://',
             $_SERVER['SERVER_NAME'],
             $_SERVER['SCRIPT_NAME'],
-        )),
+        ]),
         'grant_type' => 'authorization_code',
-    ));
+    ]);
 
     if ($curl->error) {
         echo $curl->response->error . ': ' . $curl->response->error_description;
@@ -33,6 +34,7 @@ if (isset($_GET['code'])) {
 
     $_SESSION['access_token'] = $curl->response->access_token;
     header('Location: ?');
+    exit;
 } elseif (!empty($_SESSION['access_token'])) {
     // Use the access token to send an email.
     $curl = new Curl();
@@ -62,18 +64,18 @@ if (isset($_GET['code'])) {
     echo 'Email ' . $curl->response->id . ' was sent.';
 } else {
     $curl = new Curl();
-    $curl->get('https://accounts.google.com/o/oauth2/auth', array(
+    $curl->get('https://accounts.google.com/o/oauth2/auth', [
         'scope' => 'https://www.googleapis.com/auth/gmail.compose',
-        'redirect_uri' => implode('', array(
+        'redirect_uri' => implode('', [
             isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http',
             '://',
             $_SERVER['SERVER_NAME'],
             $_SERVER['SCRIPT_NAME'],
-        )),
+        ]),
         'response_type' => 'code',
         'client_id' => CLIENT_ID,
         'approval_prompt' => 'force',
-    ));
+    ]);
 
     $url = $curl->responseHeaders['Location'];
     echo '<a href="' . $url . '">Continue</a>';
