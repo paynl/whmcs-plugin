@@ -11,7 +11,12 @@ $gatewayParams = getGatewayVariables($gatewayModuleName);
 
 // Die if module is not active.
 if (!$gatewayParams['type']) {
-    die("Module Not Activated");
+    die("FALSE|Module Not Activated");
+}
+
+$action = (!empty($_REQUEST['action'])) ? $_REQUEST['action'] : null;
+if ($action != 'new_ppt') {
+    die('TRUE|Ignoring');
 }
 
 \Paynl\Config::setApiToken($gatewayParams['apitoken'] ?? '');
@@ -19,13 +24,13 @@ if (!$gatewayParams['type']) {
 
 $transaction = \Paynl\Transaction::getForExchange();
 if (!$transaction) {
-    die('FALSE| Cannot find transaction');
+    die('FALSE|Cannot find transaction');
 }
 
 $invoiceId = $transaction->getExtra1();
 
 if (!$transaction->isPaid()) {
-    die('TRUE|Ignoring');
+    die('TRUE|Transaction not PAID');
 }
 
 $transactionData = $transaction->getData();
@@ -66,7 +71,6 @@ checkCbTransID($transaction->getId());
  */
 logTransaction($gatewayParams['name'], $transactionData, $transactionData['paymentDetails']['stateName']);
 
-
 if ($transaction->isPaid()) {
     /**
      * Add Invoice Payment.
@@ -86,5 +90,5 @@ if ($transaction->isPaid()) {
         null,
         $gatewayModuleName
     );
-    die('TRUE| Updated invoice to PAID');
+    die('TRUE|Updated invoice to PAID');
 }
