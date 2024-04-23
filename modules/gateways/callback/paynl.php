@@ -29,7 +29,7 @@ if (!$transaction) {
 
 $invoiceId = $transaction->getExtra1();
 
-if (!$transaction->isPaid()) {
+if (!$transaction->isPaid() && !$transaction->isAuthorized()) {
     die('TRUE|Transaction not PAID');
 }
 
@@ -71,7 +71,7 @@ checkCbTransID($transaction->getId());
  */
 logTransaction($gatewayParams['name'], $transactionData, $transactionData['paymentDetails']['stateName']);
 
-if ($transaction->isPaid()) {
+if ($transaction->isPaid() || $transaction->isAuthorized()) {
     /**
      * Add Invoice Payment.
      *
