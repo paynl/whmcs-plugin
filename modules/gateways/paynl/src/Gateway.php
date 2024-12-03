@@ -115,7 +115,7 @@ abstract class Gateway implements GatewayInterface
                 'extra1' => $params['invoiceid'],
                 'ipaddress' => \Paynl\Helper::getIp(),
                 'language' => $params['language'],
-                'object' => substr('whmcs 3.0.0|' . $whmcsversion . '|' . substr(phpversion(), 0, 3), 0, 64),
+                'object' => substr('whmcs 3.0.1|' . $whmcsversion . '|' . substr(phpversion(), 0, 3), 0, 64),
                 'orderNumber' => $params['invoiceid'],
                 'enduser' => array(
                     'initials' => $params['clientdetails']['firstname'],
