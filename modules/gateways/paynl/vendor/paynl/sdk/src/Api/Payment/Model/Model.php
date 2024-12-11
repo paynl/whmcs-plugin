@@ -15,7 +15,8 @@ abstract class Model
             if ($subItem === null) {
                 continue;
             }
-            $key = trim(str_replace(get_class($this), '', $index));
+            $keyStr = str_replace(get_class(!empty($this) ? $this : ''), '', $index);
+            $key = trim(!empty($keyStr) ? $keyStr : '');
             $result[$key] = $subItem instanceof Model
                 ? $subItem->toArray()
                 : $subItem;
