@@ -98,7 +98,12 @@ abstract class Gateway implements GatewayInterface
      */
     public static function getLink($params)
     {
-        if (isset($_POST['action']) && $_POST['action'] == 'doPayment') {
+        if (
+            (isset($_POST['action']) && $_POST['action'] == 'doPayment') ||
+            (isset($_GET['action']) && $_GET['action'] == 'masspay') ||
+            (isset($_GET['action']) && $_GET['action'] == 'addfunds')
+        ) {
+            
             \Paynl\Config::setApiToken($params['apitoken']);
             \Paynl\Config::setServiceId($params['serviceid']);
 
