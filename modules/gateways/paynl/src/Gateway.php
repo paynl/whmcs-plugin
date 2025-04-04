@@ -163,7 +163,7 @@ abstract class Gateway implements GatewayInterface
                 die($e->getMessage());
             }
         } else {
-            $url = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+            $url = "https://{$_SERVER['HTTP_HOST']}" . "/viewinvoice.php?id=" .  $params['invoiceid'];
             $payNowText = $params['langpaynow'];
 
             return "<form action='$url' method='POST'>"
